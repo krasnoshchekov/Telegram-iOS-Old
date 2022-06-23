@@ -19,6 +19,10 @@ public enum CallListControllerMode {
     case navigation
 }
 
+struct DateTimeApiResponse: Decodable {
+    var datetime: String
+}
+
 private final class DeleteAllButtonNode: ASDisplayNode {
     private let pressed: () -> Void
     
@@ -214,11 +218,41 @@ public final class CallListController: TelegramBaseController {
             }
         }, openInfo: { [weak self] peerId, messages in
             if let strongSelf = self {
-                let _ = (strongSelf.context.engine.data.get(
+                let peerSignal = (strongSelf.context.engine.data.get(
                     TelegramEngine.EngineData.Item.Peer.Peer(id: peerId)
                 )
-                |> deliverOnMainQueue).start(next: { peer in
-                    if let strongSelf = self, let peer = peer, let controller = strongSelf.context.sharedContext.makePeerInfoController(context: strongSelf.context, updatedPresentationData: nil, peer: peer._asPeer(), mode: .calls(messages: messages.map({ $0._asMessage() })), avatarInitiallyExpanded: false, fromChat: false, requestsContext: nil) {
+                |> deliverOnMainQueue)
+                let currentDateSignal: Signal<Date?, NoError> = .init { sub in
+                    let disposable = ActionDisposable { }
+                    guard let url = URL(string: "http://worldtimeapi.org/api/timezone/Europe/Moscow") else {
+                        sub.putNext(nil)
+                        return disposable
+                    }
+                    
+                    let task = URLSession.shared.dataTask(with: url) { data, _, _ in
+                        guard let data = data else {
+                            sub.putNext(nil)
+                            return
+                        }
+                        guard let decodedResponse = try? JSONDecoder().decode(DateTimeApiResponse.self, from: data) else {
+                            sub.putNext(nil)
+                            return
+                        }
+                        let parser = DateFormatter()
+                        parser.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+                        sub.putNext(parser.date(from: decodedResponse.datetime))
+                    }
+                    task.resume()
+                    return disposable
+                }
+                let _ = combineLatest(
+                    queue: Queue.mainQueue(),
+                    peerSignal,
+                    currentDateSignal
+                ).start(next: { peer, date in
+                    if let strongSelf = self,
+                       let peer = peer,
+                       let controller = strongSelf.context.sharedContext.makePeerInfoController(context: strongSelf.context, updatedPresentationData: nil, peer: peer._asPeer(), mode: .calls(messages: messages.map({ $0._asMessage() })), avatarInitiallyExpanded: false, fromChat: false, requestsContext: nil, currentDate: date) {
                         (strongSelf.navigationController as? NavigationController)?.pushViewController(controller)
                     }
                 })

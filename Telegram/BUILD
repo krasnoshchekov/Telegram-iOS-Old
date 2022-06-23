@@ -663,64 +663,64 @@ plist_fragment(
     )
 )
 
-watchos_extension(
-    name = "TelegramWatchExtension",
-    bundle_id = "{telegram_bundle_id}.watchkitapp.watchkitextension".format(
-        telegram_bundle_id = telegram_bundle_id,
-    ),
-    bundle_name = "TelegramWatchExtension",
-    infoplists = [
-        ":WatchExtensionInfoPlist",
-        ":VersionInfoPlist",
-        ":BuildNumberInfoPlist",
-        ":AppNameInfoPlist",
-        ":WatchExtensionNSExtensionInfoPlist",
-    ],
-    minimum_os_version = "5.0",
-    provisioning_profile = select({
-        ":disableProvisioningProfilesSetting": None,
-        "//conditions:default": "@build_configuration//provisioning:WatchExtension.mobileprovision",
-    }),
-    resources = [
-        ":TelegramWatchExtensionResources",
-    ],
-    strings = [
-        ":WatchAppStringResources",
-    ],
-    deps = [
-        ":TelegramWatchLib",
-    ],
-)
+#watchos_extension(
+#    name = "TelegramWatchExtension",
+#    bundle_id = "{telegram_bundle_id}.watchkitapp.watchkitextension".format(
+#        telegram_bundle_id = telegram_bundle_id,
+#    ),
+#    bundle_name = "TelegramWatchExtension",
+#    infoplists = [
+#        ":WatchExtensionInfoPlist",
+#        ":VersionInfoPlist",
+#        ":BuildNumberInfoPlist",
+#        ":AppNameInfoPlist",
+#        ":WatchExtensionNSExtensionInfoPlist",
+#    ],
+#    minimum_os_version = "5.0",
+#    provisioning_profile = select({
+#        ":disableProvisioningProfilesSetting": None,
+#        "//conditions:default": "@build_configuration//provisioning:WatchExtension.mobileprovision",
+#    }),
+#    resources = [
+#        ":TelegramWatchExtensionResources",
+#    ],
+#    strings = [
+#        ":WatchAppStringResources",
+#    ],
+#    deps = [
+#        ":TelegramWatchLib",
+#    ],
+#)
 
-watchos_application(
-    name = "TelegramWatchApp",
-    bundle_id = "{telegram_bundle_id}.watchkitapp".format(
-        telegram_bundle_id = telegram_bundle_id,
-    ),
-    bundle_name = "TelegramWatch",
-    extension = ":TelegramWatchExtension",
-    infoplists = [
-        ":WatchAppInfoPlist",
-        ":VersionInfoPlist",
-        "BuildNumberInfoPlist",
-        ":AppNameInfoPlist",
-        ":WatchAppCompanionInfoPlist",
-    ],
-    minimum_os_version = "5.0",
-    provisioning_profile = select({
-        ":disableProvisioningProfilesSetting": None,
-        "//conditions:default": "@build_configuration//provisioning:WatchApp.mobileprovision",
-    }),
-    resources = [
-        ":TelegramWatchAppResources",
-        ":TelegramWatchAppAssets",
-    ],
-    storyboards = [
-        ":TelegramWatchAppInterface",
-    ],
-    strings = [
-    ],
-)
+#watchos_application(
+#    name = "TelegramWatchApp",
+#    bundle_id = "{telegram_bundle_id}.watchkitapp".format(
+#        telegram_bundle_id = telegram_bundle_id,
+#    ),
+#    bundle_name = "TelegramWatch",
+#    extension = ":TelegramWatchExtension",
+#    infoplists = [
+#        ":WatchAppInfoPlist",
+#        ":VersionInfoPlist",
+#        "BuildNumberInfoPlist",
+#        ":AppNameInfoPlist",
+#        ":WatchAppCompanionInfoPlist",
+#    ],
+#    minimum_os_version = "5.0",
+#    provisioning_profile = select({
+#        ":disableProvisioningProfilesSetting": None,
+#        "//conditions:default": "@build_configuration//provisioning:WatchApp.mobileprovision",
+#    }),
+#    resources = [
+#        ":TelegramWatchAppResources",
+#        ":TelegramWatchAppAssets",
+#    ],
+#    storyboards = [
+#        ":TelegramWatchAppInterface",
+#    ],
+#    strings = [
+#    ],
+#)
 
 plist_fragment(
     name = "MtProtoKitInfoPlist",
@@ -1940,10 +1940,7 @@ ios_application(
             ":BroadcastUploadExtension",
         ],
     }),
-    watch_application = select({
-        ":disableExtensionsSetting": None,
-        "//conditions:default": ":TelegramWatchApp",
-    }) if telegram_enable_watch else None,
+    watch_application = None,
     deps = [
         ":Main",
         ":Lib",
