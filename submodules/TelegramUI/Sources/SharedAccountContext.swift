@@ -1508,13 +1508,7 @@ public final class SharedAccountContextImpl: SharedAccountContext {
     }
 }
 
-<<<<<<< HEAD
-private func peerInfoControllerImpl(context: AccountContext, updatedPresentationData: (PresentationData, Signal<PresentationData, NoError>)?, peer: Peer, mode: PeerInfoControllerMode, avatarInitiallyExpanded: Bool, isOpenedFromChat: Bool, requestsContext: PeerInvitationImportersContext? = nil) -> ViewController? {
-=======
-private let defaultChatControllerInteraction = ChatControllerInteraction.default
-
 private func peerInfoControllerImpl(context: AccountContext, updatedPresentationData: (PresentationData, Signal<PresentationData, NoError>)?, peer: Peer, mode: PeerInfoControllerMode, avatarInitiallyExpanded: Bool, isOpenedFromChat: Bool, requestsContext: PeerInvitationImportersContext? = nil, currentDate: Date? = nil) -> ViewController? {
->>>>>>> 98c3e0f3ff7ba041bc10135f3692a1f4419e58ad
     if let _ = peer as? TelegramGroup {
         return PeerInfoScreenImpl(context: context, updatedPresentationData: updatedPresentationData, peerId: peer.id, avatarInitiallyExpanded: avatarInitiallyExpanded, isOpenedFromChat: isOpenedFromChat, nearbyPeerDistance: nil, callMessages: [], currentDate: currentDate)
     } else if let _ = peer as? TelegramChannel {
